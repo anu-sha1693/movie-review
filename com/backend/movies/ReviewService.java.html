@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>ReviewService.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+ReviewService.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com</span><span class="s2">.</span><span class="s1">backend</span><span class="s2">.</span><span class="s1">movies</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">springframework</span><span class="s2">.</span><span class="s1">beans</span><span class="s2">.</span><span class="s1">factory</span><span class="s2">.</span><span class="s1">annotation</span><span class="s2">.</span><span class="s1">Autowired</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">springframework</span><span class="s2">.</span><span class="s1">data</span><span class="s2">.</span><span class="s1">mongodb</span><span class="s2">.</span><span class="s1">core</span><span class="s2">.</span><span class="s1">MongoTemplate</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">springframework</span><span class="s2">.</span><span class="s1">data</span><span class="s2">.</span><span class="s1">mongodb</span><span class="s2">.</span><span class="s1">core</span><span class="s2">.</span><span class="s1">query</span><span class="s2">.</span><span class="s1">Criteria</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">springframework</span><span class="s2">.</span><span class="s1">data</span><span class="s2">.</span><span class="s1">mongodb</span><span class="s2">.</span><span class="s1">core</span><span class="s2">.</span><span class="s1">query</span><span class="s2">.</span><span class="s1">Update</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">springframework</span><span class="s2">.</span><span class="s1">stereotype</span><span class="s2">.</span><span class="s1">Service</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">time</span><span class="s2">.</span><span class="s1">LocalDateTime</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">Optional</span><span class="s2">;</span>
+
+<span class="s1">@Service</span>
+<span class="s0">public class </span><span class="s1">ReviewService </span><span class="s2">{</span>
+    <span class="s1">@Autowired</span>
+    <span class="s0">private </span><span class="s1">ReviewRepository repository</span><span class="s2">;</span>
+
+    <span class="s1">@Autowired</span>
+    <span class="s0">private </span><span class="s1">MongoTemplate mongoTemplate</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">Review createReview</span><span class="s2">(</span><span class="s1">String reviewBody</span><span class="s2">, </span><span class="s1">String imdbId</span><span class="s2">) {</span>
+        <span class="s1">Review review </span><span class="s2">= </span><span class="s1">repository</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Review</span><span class="s2">(</span><span class="s1">reviewBody</span><span class="s2">));</span>
+<span class="s2">;</span>
+        <span class="s1">mongoTemplate</span><span class="s2">.</span><span class="s1">update</span><span class="s2">(</span><span class="s1">Movie</span><span class="s2">.</span><span class="s0">class</span><span class="s2">)</span>
+                <span class="s2">.</span><span class="s1">matching</span><span class="s2">(</span><span class="s1">Criteria</span><span class="s2">.</span><span class="s1">where</span><span class="s2">(</span><span class="s3">&quot;imdbId&quot;</span><span class="s2">).</span><span class="s1">is</span><span class="s2">(</span><span class="s1">imdbId</span><span class="s2">))</span>
+                <span class="s2">.</span><span class="s1">apply</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Update</span><span class="s2">().</span><span class="s1">push</span><span class="s2">(</span><span class="s3">&quot;reviewIds&quot;</span><span class="s2">).</span><span class="s1">value</span><span class="s2">(</span><span class="s1">review</span><span class="s2">.</span><span class="s1">getId</span><span class="s2">()))</span>
+                <span class="s2">.</span><span class="s1">first</span><span class="s2">();</span>
+        <span class="s0">return </span><span class="s1">review</span><span class="s2">;</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>
